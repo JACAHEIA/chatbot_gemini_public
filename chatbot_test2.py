@@ -12,6 +12,8 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+import streamlit as st
+import google.generativeai as genai
 
 # Configurar la API Key de Gemini usando el secrets.toml
 genai.configure(api_key=st.secrets["api_key"])
@@ -22,16 +24,16 @@ model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
 # Configuración de la página
 st.set_page_config(page_title="Chatbot de Mauricio Coloma", page_icon="🤖", layout="centered")
 
-# Título
+# Título principal
 st.markdown("<h1 style='text-align: center; color: green;'>🤖 Chatbot de Mauricio Coloma 🚀</h1>", unsafe_allow_html=True)
 
-# Descripción
+# Subtítulo en rojo
 st.markdown('<h3 style="color: red;">Hazme una pregunta:</h3>', unsafe_allow_html=True)
 
-# Área de texto para la pregunta
-user_input = st.text_input("Hazme una pregunta:")
+# Área de texto para la pregunta (sin repetir el texto dentro)
+user_input = st.text_input(label="")
 
-# Botones
+# Botones de Enviar y Borrar
 col1, col2 = st.columns(2)
 
 with col1:
@@ -43,7 +45,7 @@ with col1:
             except Exception as e:
                 st.error(f"Ocurrió un error: {e}")
         else:
-            st.warning("Por favor, escribe una pregunta antes de enviar.")
+            st.warning("⚠️ Por favor, escribe una pregunta antes de enviar.")
 
 with col2:
     if st.button("Borrar"):
