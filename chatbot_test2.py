@@ -1,51 +1,50 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Configurar tu API KEY de Gemini (ponla aquí directamente o usa st.secrets si prefieres ocultarla)
-genai.configure(api_key="AIzaSyBvzvYhvR3Eo2pyMIJKrrpZJGSGt2Lhw5U")
-
-# ---- Diseño: Fondo, título y descripción ----
-page_bg_img = '''
-<style>
-.stApp {
-background-color: #f5f5f5;
-}
-</style>
-'''
-st.markdown(page_bg_img, unsafe_allow_html=True)
-
+# Aplicar estilo para que el texto de entrada se vea negro en móviles
 st.markdown(
-    "<h1 style='text-align: center; color: #4CAF50;'>🤖 Chatbot de Mauricio Coloma 🚀</h1>",
+    """
+    <style>
+    input {
+        color: black !important;
+    }
+    </style>
+    """,
     unsafe_allow_html=True
 )
 
-st.markdown(
-    "<p style='text-align: center;'>Este chatbot responde tus preguntas usando IA avanzada de Gemini. ¡Escribe cualquier duda!</p>",
-    unsafe_allow_html=True
-)
+# Configurar la API Key de Gemini usando el secrets.toml
+genai.configure(api_key=st.secrets["api_key"])
 
-# ---- Entrada del usuario ----
+# Crear el modelo
+model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
+
+# Configuración de la página
+st.set_page_config(page_title="Chatbot de Mauricio Coloma", page_icon="🤖", layout="centered")
+
+# Título
+st.markdown("<h1 style='text-align: center; color: green;'>🤖 Chatbot de Mauricio Coloma 🚀</h1>", unsafe_allow_html=True)
+
+# Descripción
+st.markdown('<h3 style="color: red;">Hazme una pregunta:</h3>', unsafe_allow_html=True)
+
+# Área de texto para la pregunta
 user_input = st.text_input("Hazme una pregunta:")
 
-# ---- Botón para enviar la pregunta ----
-if st.button("Enviar"):
-    if user_input:
-        try:
-            model = genai.GenerativeModel(model_name="models/gemini-1.5-pro-latest")
-            response = model.generate_content(user_input)
-            st.subheader("💬 Respuesta de Gemini:")
-            st.write(response.text.strip())
-        except Exception as e:
-            st.error(f"[Error] Algo salió mal: {e}")
-    else:
-        st.warning("⚠️ Por favor escribe una pregunta antes de enviar.")
+# Botones
+col1, col2 = st.columns(2)
 
-# ---- Botón para borrar todo ----
-if st.button("Borrar"):
-    st.experimental_rerun()
+with col1:
+    if st.button("Enviar"):
+        if user_input:
+            try:
+                response = model.generate_content(user_input)
+                st.success(response.text)
+            except Exception as e:
+                st.error(f"Ocurrió un error: {e}")
+        else:
+            st.warning("Por favor, escribe una pregunta antes de enviar.")
 
-# ---- Pie de página ----
-st.markdown(
-    "<footer style='text-align: center; margin-top: 50px; color: #888;'>Creado por Mauricio Coloma 💻</footer>",
-    unsafe_allow_html=True
-)
+with col2:
+    if st.button("Borrar"):
+        st.experimental_rerun()
