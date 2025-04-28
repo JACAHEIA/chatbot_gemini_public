@@ -39,4 +39,4 @@ with col1:
 
 with col2:
     if st.button("Borrar"):
-        st.experimental_rerun()
+        st.rerun()
